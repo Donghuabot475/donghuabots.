@@ -1,0 +1,400 @@
+
+index_html = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DonghuaBOT — Donghua with Sinhala Subtitles</title>
+    <meta name="description" content="Watch Chinese animation (Donghua) with Sinhala subtitles. Stream the latest episodes of Renegade Immortal, Perfect World, Swallowed Star and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="home">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">东</div>
+                <span>DonghuaBOT</span>
+            </a>
+            
+            <nav class="nav-desktop">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="donghua.html" class="nav-link">Donghua</a>
+                <a href="donghua.html" class="nav-link">Latest Episodes</a>
+                <a href="donghua.html" class="nav-link">Popular</a>
+                <a href="donghua.html" class="nav-link">Genres</a>
+                <a href="schedule.html" class="nav-link">Schedule</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="icon-btn search-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+                <a href="watchlist.html" class="icon-btn" aria-label="Watchlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </a>
+                <button class="btn-primary login-btn" style="padding: 8px 20px; font-size: 0.85rem;">Login</button>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="index.html" class="mobile-nav-link active">Home</a>
+            <a href="donghua.html" class="mobile-nav-link">Donghua</a>
+            <a href="donghua.html" class="mobile-nav-link">Latest Episodes</a>
+            <a href="donghua.html" class="mobile-nav-link">Popular</a>
+            <a href="donghua.html" class="mobile-nav-link">Genres</a>
+            <a href="schedule.html" class="mobile-nav-link">Schedule</a>
+            <a href="watchlist.html" class="mobile-nav-link">Watchlist</a>
+        </div>
+    </nav>
+    
+    <!-- Search Overlay -->
+    <div class="search-overlay">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" placeholder="Search donghua..." autocomplete="off">
+                <button class="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div class="search-results"></div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" aria-label="Close modal">✕</button>
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your watchlist and continue watching</p>
+            </div>
+            <form class="login-form">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <form class="register-form" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" placeholder="Your username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+            <div class="modal-footer">
+                <p>Don't have an account? <a href="#" class="switch-to-register">Create one</a></p>
+                <p style="display: none;">Already have an account? <a href="#" class="switch-to-login">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-slide active">
+                <div class="hero-bg" style="background-image: url('https://placehold.co/1920x800/080b12/00d9ff?text=Renegade+Immortal+Banner');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>📺</span>
+                        <span class="sinhala-text">සිංහල උපසිරැසි</span>
+                    </div>
+                    <h1 class="hero-title">Renegade Immortal</h1>
+                    <div class="hero-meta">
+                        <span class="hero-rating">⭐ 9.2</span>
+                        <span class="hero-year">2023</span>
+                        <span class="hero-episodes">Episode 125</span>
+                    </div>
+                    <div class="hero-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Adventure</span>
+                        <span class="genre-tag">Fantasy</span>
+                        <span class="genre-tag">Cultivation</span>
+                    </div>
+                    <p class="hero-description">A young cultivator begins an extraordinary journey through a dangerous cultivation world, facing powerful enemies and uncovering the secrets of immortality.</p>
+                    <div class="hero-actions">
+                        <a href="watch.html?id=renegade-immortal&ep=125" class="btn-primary">
+                            <span>▶</span> Watch Now
+                        </a>
+                        <button class="btn-secondary add-watchlist-btn" data-id="renegade-immortal">
+                            <span>＋</span> Add to Watchlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <div class="hero-bg" style="background-image: url('https://placehold.co/1920x800/080b12/7c3cff?text=Perfect+World+Banner');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>📺</span>
+                        <span class="sinhala-text">සිංහල උපසිරැසි</span>
+                    </div>
+                    <h1 class="hero-title">Perfect World</h1>
+                    <div class="hero-meta">
+                        <span class="hero-rating">⭐ 9.0</span>
+                        <span class="hero-year">2021</span>
+                        <span class="hero-episodes">Episode 683</span>
+                    </div>
+                    <div class="hero-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Adventure</span>
+                        <span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="hero-description">Born with a supreme bone, a young boy rises from adversity to become the strongest being in the vast perfect world.</p>
+                    <div class="hero-actions">
+                        <a href="watch.html?id=perfect-world&ep=683" class="btn-primary">
+                            <span>▶</span> Watch Now
+                        </a>
+                        <button class="btn-secondary add-watchlist-btn" data-id="perfect-world">
+                            <span>＋</span> Add to Watchlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <div class="hero-bg" style="background-image: url('https://placehold.co/1920x800/080b12/00d9ff?text=Swallowed+Star+Banner');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span>📺</span>
+                        <span class="sinhala-text">සිංහල උපසිරැසි</span>
+                    </div>
+                    <h1 class="hero-title">Swallowed Star</h1>
+                    <div class="hero-meta">
+                        <span class="hero-rating">⭐ 8.8</span>
+                        <span class="hero-year">2020</span>
+                        <span class="hero-episodes">Episode 199</span>
+                    </div>
+                    <div class="hero-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Sci-Fi</span>
+                        <span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="hero-description">In a post-apocalyptic world, a young man discovers an ancient cultivation method that allows him to evolve beyond human limits.</p>
+                    <div class="hero-actions">
+                        <a href="watch.html?id=swallowed-star&ep=199" class="btn-primary">
+                            <span>▶</span> Watch Now
+                        </a>
+                        <button class="btn-secondary add-watchlist-btn" data-id="swallowed-star">
+                            <span>＋</span> Add to Watchlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-dots">
+                <button class="hero-dot active" aria-label="Slide 1"></button>
+                <button class="hero-dot" aria-label="Slide 2"></button>
+                <button class="hero-dot" aria-label="Slide 3"></button>
+            </div>
+            <div class="hero-nav">
+                <button class="hero-nav-btn hero-prev" aria-label="Previous">◀</button>
+                <button class="hero-nav-btn hero-next" aria-label="Next">▶</button>
+            </div>
+        </section>
+        
+        <!-- Continue Watching -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">⏱</div>
+                        Continue Watching
+                    </h2>
+                </div>
+                <div class="scroll-container continue-watching-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Trending Donghua -->
+        <section class="section" style="background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">🔥</div>
+                        Trending Donghua
+                    </h2>
+                    <a href="donghua.html" class="section-link">
+                        View All →
+                    </a>
+                </div>
+                <div class="scroll-container trending-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Latest Episodes -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">🆕</div>
+                        Latest Episodes
+                    </h2>
+                    <a href="donghua.html" class="section-link">
+                        View All →
+                    </a>
+                </div>
+                <div class="latest-container" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Popular This Week -->
+        <section class="section" style="background: var(--bg-secondary);">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">🏆</div>
+                        Popular This Week
+                    </h2>
+                    <a href="donghua.html" class="section-link">
+                        View All →
+                    </a>
+                </div>
+                <div class="popular-container popular-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Recommended For You -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">💎</div>
+                        Recommended For You
+                    </h2>
+                </div>
+                <div class="scroll-container recommendations-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Genres -->
+        <section class="section" style="background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="section-title">
+                        <div class="section-title-icon">🎭</div>
+                        Browse by Genre
+                    </h2>
+                </div>
+                <div class="genres-grid">
+                    <a href="donghua.html?genre=Action" class="genre-btn">⚔️ Action</a>
+                    <a href="donghua.html?genre=Adventure" class="genre-btn">🗺️ Adventure</a>
+                    <a href="donghua.html?genre=Fantasy" class="genre-btn">🐉 Fantasy</a>
+                    <a href="donghua.html?genre=Cultivation" class="genre-btn">☯️ Cultivation</a>
+                    <a href="donghua.html?genre=Martial+Arts" class="genre-btn">🥋 Martial Arts</a>
+                    <a href="donghua.html?genre=Romance" class="genre-btn">💕 Romance</a>
+                    <a href="donghua.html?genre=Comedy" class="genre-btn">😄 Comedy</a>
+                    <a href="donghua.html?genre=Drama" class="genre-btn">🎬 Drama</a>
+                    <a href="donghua.html?genre=Historical" class="genre-btn">🏛️ Historical</a>
+                    <a href="donghua.html?genre=Mystery" class="genre-btn">🔮 Mystery</a>
+                    <a href="donghua.html?genre=Sci-Fi" class="genre-btn">🚀 Sci-Fi</a>
+                    <a href="donghua.html?genre=Supernatural" class="genre-btn">👻 Supernatural</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">东</div>
+                        <span>DonghuaBOT</span>
+                    </a>
+                    <p>Your home for donghua with Sinhala subtitles. Discover the best Chinese animation with high-quality Sinhala translations.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">f</a>
+                        <a href="#" class="social-link" aria-label="YouTube">▶</a>
+                        <a href="#" class="social-link" aria-label="Discord">D</a>
+                        <a href="#" class="social-link" aria-label="Telegram">T</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="footer-title">Navigation</h3>
+                    <div class="footer-links">
+                        <a href="index.html" class="footer-link">Home</a>
+                        <a href="donghua.html" class="footer-link">Donghua</a>
+                        <a href="schedule.html" class="footer-link">Schedule</a>
+                        <a href="watchlist.html" class="footer-link">Watchlist</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="footer-title">Legal</h3>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">About</a>
+                        <a href="#" class="footer-link">Contact</a>
+                        <a href="#" class="footer-link">DMCA</a>
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Terms</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="footer-title">Community</h3>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Request Donghua</a>
+                        <a href="#" class="footer-link">Report Issue</a>
+                        <a href="#" class="footer-link">FAQ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2026 DonghuaBOT. All rights reserved.</p>
+                <p class="footer-copyright sinhala-text">සිංහල උපසිරැසි සමඟ චීන ඇනිමේෂන් නරඹන්න</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to Top -->
+    <button class="back-to-top" aria-label="Back to top">↑</button>
+    
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/watchlist.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+'''
+
+with open("/mnt/agents/output/DonghuaBOT/index.html", "w", encoding="utf-8") as f:
+    f.write(index_html)
+
+print("index.html created successfully")

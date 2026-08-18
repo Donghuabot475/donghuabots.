@@ -1,0 +1,343 @@
+
+data_js = '''// ==========================================
+// DonghuaBOT - Central Data Store
+// ==========================================
+
+const DONGHUA_DATA = [
+    {
+        id: "renegade-immortal",
+        title: "Renegade Immortal",
+        altTitle: "Xian Ni",
+        description: "A young cultivator begins an extraordinary journey through a dangerous cultivation world, facing powerful enemies and uncovering the secrets of immortality.",
+        rating: 9.2,
+        year: 2023,
+        status: "Ongoing",
+        studio: "Build Dream",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Cultivation"],
+        totalEpisodes: 126,
+        currentEpisode: 125,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/00d9ff?text=Renegade+Immortal",
+        banner: "https://placehold.co/1920x800/080b12/00d9ff?text=Renegade+Immortal+Banner",
+        featured: true,
+        trending: true,
+        popular: 1
+    },
+    {
+        id: "perfect-world",
+        title: "Perfect World",
+        altTitle: "Wanmei Shijie",
+        description: "Born with a supreme bone, a young boy rises from adversity to become the strongest being in the vast perfect world.",
+        rating: 9.0,
+        year: 2021,
+        status: "Ongoing",
+        studio: "Foch Films",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Cultivation"],
+        totalEpisodes: 683,
+        currentEpisode: 683,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/7c3cff?text=Perfect+World",
+        banner: "https://placehold.co/1920x800/080b12/7c3cff?text=Perfect+World+Banner",
+        featured: true,
+        trending: true,
+        popular: 2
+    },
+    {
+        id: "swallowed-star",
+        title: "Swallowed Star",
+        altTitle: "Tunshi Xingkong",
+        description: "In a post-apocalyptic world, a young man discovers an ancient cultivation method that allows him to evolve beyond human limits.",
+        rating: 8.8,
+        year: 2020,
+        status: "Ongoing",
+        studio: "Sparkly Key",
+        country: "China",
+        genres: ["Action", "Sci-Fi", "Fantasy", "Adventure"],
+        totalEpisodes: 199,
+        currentEpisode: 199,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/00d9ff?text=Swallowed+Star",
+        banner: "https://placehold.co/1920x800/080b12/00d9ff?text=Swallowed+Star+Banner",
+        featured: true,
+        trending: true,
+        popular: 3
+    },
+    {
+        id: "battle-through-heavens",
+        title: "Battle Through the Heavens",
+        altTitle: "Doupo Cangqiong",
+        description: "A fallen genius rises again with the help of an ancient spirit, vowing to reclaim his lost glory and protect those he loves.",
+        rating: 9.1,
+        year: 2017,
+        status: "Ongoing",
+        studio: "Shanghai Motion Magic",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Cultivation", "Romance"],
+        totalEpisodes: 180,
+        currentEpisode: 180,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/ff6b35?text=Battle+Through+Heavens",
+        banner: "https://placehold.co/1920x800/080b12/ff6b35?text=Battle+Through+Heavens+Banner",
+        featured: false,
+        trending: true,
+        popular: 4
+    },
+    {
+        id: "soul-land",
+        title: "Soul Land",
+        altTitle: "Douluo Dalu",
+        description: "Tang San, a prodigy of the Tang Sect, is reborn into a world of spirit masters where he must forge his own path to greatness.",
+        rating: 8.9,
+        year: 2018,
+        status: "Completed",
+        studio: "Sparkly Key",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Romance"],
+        totalEpisodes: 264,
+        currentEpisode: 264,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/00ff88?text=Soul+Land",
+        banner: "https://placehold.co/1920x800/080b12/00ff88?text=Soul+Land+Banner",
+        featured: false,
+        trending: true,
+        popular: 5
+    },
+    {
+        id: "throne-of-seal",
+        title: "Throne of Seal",
+        altTitle: "Shen Yin Wangzuo",
+        description: "A young knight embarks on a journey to protect humanity from demonic forces while uncovering his own mysterious origins.",
+        rating: 8.7,
+        year: 2022,
+        status: "Ongoing",
+        studio: "Shenman Entertainment",
+        country: "China",
+        genres: ["Action", "Fantasy", "Adventure", "Supernatural"],
+        totalEpisodes: 156,
+        currentEpisode: 156,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/ffcc00?text=Throne+of+Seal",
+        banner: "https://placehold.co/1920x800/080b12/ffcc00?text=Throne+of+Seal+Banner",
+        featured: false,
+        trending: true,
+        popular: 6
+    },
+    {
+        id: "great-ruler",
+        title: "The Great Ruler",
+        altTitle: "Da Zhu Zai",
+        description: "In a world where spiritual energy determines one's fate, a young man rises from humble beginnings to become the Great Ruler.",
+        rating: 8.5,
+        year: 2023,
+        status: "Ongoing",
+        studio: "Ruo Hong Culture",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Cultivation"],
+        totalEpisodes: 78,
+        currentEpisode: 78,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/ff3366?text=The+Great+Ruler",
+        banner: "https://placehold.co/1920x800/080b12/ff3366?text=The+Great+Ruler+Banner",
+        featured: false,
+        trending: false,
+        popular: 7
+    },
+    {
+        id: "mortal-journey",
+        title: "A Record of a Mortal's Journey to Immortality",
+        altTitle: "Fanren Xiu Xian Chuan",
+        description: "An ordinary mortal discovers a mysterious bottle that allows him to cultivate immortality, beginning his extraordinary journey.",
+        rating: 9.3,
+        year: 2020,
+        status: "Ongoing",
+        studio: "Wan Wei Mao",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Cultivation", "Martial Arts"],
+        totalEpisodes: 142,
+        currentEpisode: 142,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/00d9ff?text=Mortal+Journey",
+        banner: "https://placehold.co/1920x800/080b12/00d9ff?text=Mortal+Journey+Banner",
+        featured: true,
+        trending: true,
+        popular: 8
+    },
+    {
+        id: "shrouding-heavens",
+        title: "Shrouding the Heavens",
+        altTitle: "Zhe Tian",
+        description: "A young man discovers ancient secrets buried beneath the earth, leading him on a path to uncover the truth of the cosmos.",
+        rating: 8.6,
+        year: 2023,
+        status: "Ongoing",
+        studio: "Tencent Penguin Pictures",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Mystery", "Supernatural"],
+        totalEpisodes: 96,
+        currentEpisode: 96,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/7c3cff?text=Shrouding+the+Heavens",
+        banner: "https://placehold.co/1920x800/080b12/7c3cff?text=Shrouding+the+Heavens+Banner",
+        featured: false,
+        trending: false,
+        popular: 9
+    },
+    {
+        id: "jade-dynasty",
+        title: "Jade Dynasty",
+        altTitle: "Zhu Xian",
+        description: "A kind-hearted orphan joins a cultivation sect and becomes entangled in a destiny that will shape the fate of the world.",
+        rating: 8.4,
+        year: 2022,
+        status: "Completed",
+        studio: "Cloud Animation",
+        country: "China",
+        genres: ["Action", "Fantasy", "Romance", "Drama", "Cultivation"],
+        totalEpisodes: 52,
+        currentEpisode: 52,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/00ff88?text=Jade+Dynasty",
+        banner: "https://placehold.co/1920x800/080b12/00ff88?text=Jade+Dynasty+Banner",
+        featured: false,
+        trending: false,
+        popular: 10
+    },
+    {
+        id: "martial-universe",
+        title: "Martial Universe",
+        altTitle: "Wu Dong Qian Kun",
+        description: "Lin Dong, a young man from a declining clan, discovers a mysterious stone talisman that changes his destiny forever.",
+        rating: 8.7,
+        year: 2019,
+        status: "Completed",
+        studio: "Shanghai Motion Magic",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Martial Arts", "Cultivation"],
+        totalEpisodes: 48,
+        currentEpisode: 48,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/ff6b35?text=Martial+Universe",
+        banner: "https://placehold.co/1920x800/080b12/ff6b35?text=Martial+Universe+Banner",
+        featured: false,
+        trending: false,
+        popular: 11
+    },
+    {
+        id: "against-gods",
+        title: "Against the Gods",
+        altTitle: "Ni Tian Xie Shen",
+        description: "A man who carries the secret of the Sky Poison Pearl is reborn into a new world, vowing to protect those precious to him.",
+        rating: 8.3,
+        year: 2023,
+        status: "Ongoing",
+        studio: "iQIYI",
+        country: "China",
+        genres: ["Action", "Adventure", "Fantasy", "Romance", "Cultivation"],
+        totalEpisodes: 64,
+        currentEpisode: 64,
+        sinhalaSub: true,
+        poster: "https://placehold.co/300x450/151b27/ff3366?text=Against+the+Gods",
+        banner: "https://placehold.co/1920x800/080b12/ff3366?text=Against+the+Gods+Banner",
+        featured: false,
+        trending: false,
+        popular: 12
+    }
+];
+
+const GENRES = [
+    "Action", "Adventure", "Fantasy", "Cultivation", "Martial Arts",
+    "Romance", "Comedy", "Drama", "Historical", "Mystery", "Sci-Fi", "Supernatural"
+];
+
+const SCHEDULE_DATA = [
+    { day: "Monday", donghua: "Renegade Immortal", episode: 126, status: "Upcoming" },
+    { day: "Monday", donghua: "Against the Gods", episode: 65, status: "Upcoming" },
+    { day: "Tuesday", donghua: "Perfect World", episode: 684, status: "Upcoming" },
+    { day: "Tuesday", donghua: "Jade Dynasty", episode: 53, status: "Upcoming" },
+    { day: "Wednesday", donghua: "Swallowed Star", episode: 200, status: "Upcoming" },
+    { day: "Wednesday", donghua: "Martial Universe", episode: 49, status: "Upcoming" },
+    { day: "Thursday", donghua: "Battle Through the Heavens", episode: 181, status: "Upcoming" },
+    { day: "Thursday", donghua: "The Great Ruler", episode: 79, status: "Upcoming" },
+    { day: "Friday", donghua: "Soul Land", episode: 265, status: "Upcoming" },
+    { day: "Friday", donghua: "Throne of Seal", episode: 157, status: "Upcoming" },
+    { day: "Saturday", donghua: "A Record of a Mortal's Journey to Immortality", episode: 143, status: "Upcoming" },
+    { day: "Saturday", donghua: "Shrouding the Heavens", episode: 97, status: "Upcoming" },
+    { day: "Sunday", donghua: "Renegade Immortal", episode: 127, status: "Upcoming" }
+];
+
+// Utility functions
+function getDonghuaById(id) {
+    return DONGHUA_DATA.find(d => d.id === id);
+}
+
+function getFeaturedDonghua() {
+    return DONGHUA_DATA.filter(d => d.featured);
+}
+
+function getTrendingDonghua() {
+    return DONGHUA_DATA.filter(d => d.trending).slice(0, 6);
+}
+
+function getPopularDonghua() {
+    return [...DONGHUA_DATA].sort((a, b) => a.popular - b.popular).slice(0, 10);
+}
+
+function getLatestEpisodes() {
+    return [...DONGHUA_DATA]
+        .sort((a, b) => b.currentEpisode - a.currentEpisode)
+        .slice(0, 8)
+        .map(d => ({
+            ...d,
+            displayEpisode: d.currentEpisode,
+            isNew: d.currentEpisode === d.totalEpisodes
+        }));
+}
+
+function getDonghuaByGenre(genre) {
+    if (!genre || genre === "All") return DONGHUA_DATA;
+    return DONGHUA_DATA.filter(d => d.genres.includes(genre));
+}
+
+function searchDonghua(query) {
+    if (!query) return DONGHUA_DATA;
+    const lowerQuery = query.toLowerCase();
+    return DONGHUA_DATA.filter(d =>
+        d.title.toLowerCase().includes(lowerQuery) ||
+        d.altTitle.toLowerCase().includes(lowerQuery) ||
+        d.genres.some(g => g.toLowerCase().includes(lowerQuery)) ||
+        d.description.toLowerCase().includes(lowerQuery) ||
+        d.currentEpisode.toString().includes(lowerQuery)
+    );
+}
+
+function getRecommendations(excludeId) {
+    const shuffled = DONGHUA_DATA.filter(d => d.id !== excludeId).sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 6);
+}
+
+function generateEpisodes(donghuaId, count) {
+    const episodes = [];
+    for (let i = 1; i <= count; i++) {
+        episodes.push({
+            number: i,
+            title: `Episode ${String(i).padStart(2, '0')}`,
+            sinhalaSub: true,
+            duration: "24:00",
+            thumbnail: `https://placehold.co/400x225/151b27/00d9ff?text=EP+${i}`
+        });
+    }
+    return episodes;
+}
+
+// Export for module usage (if needed)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { DONGHUA_DATA, GENRES, SCHEDULE_DATA };
+}
+'''
+
+with open("/mnt/agents/output/DonghuaBOT/js/data.js", "w", encoding="utf-8") as f:
+    f.write(data_js)
+
+print("data.js created successfully")

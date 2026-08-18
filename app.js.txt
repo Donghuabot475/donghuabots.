@@ -1,0 +1,878 @@
+
+app_js = '''// ==========================================
+// DonghuaBOT - Main Application Logic
+// ==========================================
+
+(function() {
+    'use strict';
+
+    // ==========================================
+    // DOM Ready
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        initHeader();
+        initMobileMenu();
+        initSearch();
+        initHeroCarousel();
+        initScrollReveal();
+        initBackToTop();
+        initLoginModal();
+        initWatchlistButtons();
+        initGenreFilter();
+        initContinueWatching();
+        initPageSpecific();
+    });
+
+    // ==========================================
+    // Header Scroll Effect
+    // ==========================================
+    function initHeader() {
+        const header = document.querySelector('.header');
+        if (!header) return;
+
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        }, { passive: true });
+    }
+
+    // ==========================================
+    // Mobile Menu
+    // ==========================================
+    function initMobileMenu() {
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.querySelector('.mobile-nav');
+        
+        if (!menuBtn || !mobileNav) return;
+
+        menuBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Close mobile menu when clicking a link
+        mobileNav.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                menuBtn.classList.remove('active');
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                menuBtn.classList.remove('active');
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // ==========================================
+    // Search Overlay
+    // ==========================================
+    function initSearch() {
+        const searchBtn = document.querySelector('.search-btn');
+        const searchOverlay = document.querySelector('.search-overlay');
+        const searchClose = document.querySelector('.search-close');
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+
+        if (!searchBtn || !searchOverlay) return;
+
+        searchBtn.addEventListener('click', function() {
+            searchOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (searchInput) {
+                setTimeout(() => searchInput.focus(), 100);
+            }
+        });
+
+        if (searchClose) {
+            searchClose.addEventListener('click', closeSearch);
+        }
+
+        searchOverlay.addEventListener('click', function(e) {
+            if (e.target === searchOverlay) {
+                closeSearch();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
+                closeSearch();
+            }
+        });
+
+        function closeSearch() {
+            searchOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            if (searchInput) searchInput.value = '';
+            if (searchResults) searchResults.innerHTML = '';
+        }
+
+        // Search functionality
+        if (searchInput && searchResults && typeof searchDonghua === 'function') {
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 1) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    const results = searchDonghua(query);
+                    renderSearchResults(results);
+                }, 300);
+            });
+        }
+
+        function renderSearchResults(results) {
+            if (!searchResults) return;
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No results found</h3>
+                        <p>Try searching with a different keyword</p>
+                    </div>
+                `;
+                return;
+            }
+
+            searchResults.innerHTML = results.map(d => `
+                <div class="search-result-item" onclick="window.location.href='details.html?id=${d.id}'">
+                    <img src="${d.poster}" alt="${d.title}" class="search-result-img" loading="lazy">
+                    <div class="search-result-info">
+                        <h4>${d.title}</h4>
+                        <p>${d.altTitle} • ${d.year} • ${d.currentEpisode} EP</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // ==========================================
+    // Hero Carousel
+    // ==========================================
+    function initHeroCarousel() {
+        const hero = document.querySelector('.hero');
+        if (!hero) return;
+
+        const slides = hero.querySelectorAll('.hero-slide');
+        const dots = hero.querySelectorAll('.hero-dot');
+        const prevBtn = hero.querySelector('.hero-prev');
+        const nextBtn = hero.querySelector('.hero-next');
+        
+        if (slides.length === 0) return;
+
+        let currentSlide = 0;
+        let autoPlayInterval;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            if (dots.length > 0) {
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            }
+            
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            showSlide((currentSlide + 1) % slides.length);
+        }
+
+        function prevSlide() {
+            showSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextSlide, 6000);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                stopAutoPlay();
+                nextSlide();
+                startAutoPlay();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                stopAutoPlay();
+                prevSlide();
+                startAutoPlay();
+            });
+        }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                stopAutoPlay();
+                showSlide(index);
+                startAutoPlay();
+            });
+        });
+
+        // Pause on hover
+        hero.addEventListener('mouseenter', stopAutoPlay);
+        hero.addEventListener('mouseleave', startAutoPlay);
+
+        startAutoPlay();
+    }
+
+    // ==========================================
+    // Scroll Reveal
+    // ==========================================
+    function initScrollReveal() {
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        
+        if (revealElements.length === 0) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => observer.observe(el));
+    }
+
+    // ==========================================
+    // Back to Top
+    // ==========================================
+    function initBackToTop() {
+        const backToTop = document.querySelector('.back-to-top');
+        if (!backToTop) return;
+
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ==========================================
+    // Login Modal
+    // ==========================================
+    function initLoginModal() {
+        const loginBtn = document.querySelector('.login-btn');
+        const modalOverlay = document.querySelector('.modal-overlay');
+        const modalClose = document.querySelector('.modal-close');
+        const switchToRegister = document.querySelector('.switch-to-register');
+        const switchToLogin = document.querySelector('.switch-to-login');
+        const loginForm = document.querySelector('.login-form');
+        const registerForm = document.querySelector('.register-form');
+
+        if (!loginBtn || !modalOverlay) return;
+
+        loginBtn.addEventListener('click', function() {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        if (modalClose) {
+            modalClose.addEventListener('click', closeModal);
+        }
+
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Switch between login and register
+        if (switchToRegister && loginForm && registerForm) {
+            switchToRegister.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            });
+        }
+
+        if (switchToLogin && loginForm && registerForm) {
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerForm.style.display = 'none';
+                loginForm.style.display = 'block';
+            });
+        }
+
+        // Form submission (demo)
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showToast('Login functionality will be connected to backend API', 'info');
+                closeModal();
+            });
+        }
+
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showToast('Registration functionality will be connected to backend API', 'info');
+                closeModal();
+            });
+        }
+    }
+
+    // ==========================================
+    // Watchlist Buttons
+    // ==========================================
+    function initWatchlistButtons() {
+        document.querySelectorAll('.add-watchlist-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const donghuaId = this.dataset.id;
+                
+                if (typeof addToWatchlist === 'function') {
+                    addToWatchlist(donghuaId);
+                }
+            });
+        });
+    }
+
+    // ==========================================
+    // Genre Filter
+    // ==========================================
+    function initGenreFilter() {
+        const genreBtns = document.querySelectorAll('.genre-btn[data-genre]');
+        const cardsContainer = document.querySelector('.genre-filtered-cards');
+        
+        if (genreBtns.length === 0) return;
+
+        genreBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const genre = this.dataset.genre;
+                
+                // Update active state
+                genreBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter cards
+                if (cardsContainer && typeof getDonghuaByGenre === 'function') {
+                    const donghua = getDonghuaByGenre(genre);
+                    renderCards(cardsContainer, donghua);
+                }
+            });
+        });
+    }
+
+    // ==========================================
+    // Continue Watching
+    // ==========================================
+    function initContinueWatching() {
+        const container = document.querySelector('.continue-watching-container');
+        if (!container || typeof getContinueWatching !== 'function') return;
+
+        const items = getContinueWatching();
+        
+        if (items.length === 0) {
+            container.innerHTML = `
+                <div class="no-results" style="padding: 40px 0;">
+                    <div class="no-results-icon">📺</div>
+                    <p>No watch history yet. Start watching some donghua!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = items.map(item => `
+            <div class="continue-card" onclick="window.location.href='watch.html?id=${item.id}&ep=${item.episode}'">
+                <div class="continue-poster">
+                    <img src="${item.poster}" alt="${item.title}" loading="lazy">
+                    <div class="continue-progress">
+                        <div class="continue-progress-bar" style="width: ${item.progress}%"></div>
+                    </div>
+                </div>
+                <div class="continue-info">
+                    <div class="continue-title">${item.title}</div>
+                    <div class="continue-episode">Episode ${item.episode} • ${item.progress}% watched</div>
+                    <button class="continue-btn">▶ Continue Watching</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // Page Specific Initialization
+    // ==========================================
+    function initPageSpecific() {
+        const page = document.body.dataset.page;
+        
+        switch(page) {
+            case 'home':
+                initHomePage();
+                break;
+            case 'donghua':
+                initDonghuaPage();
+                break;
+            case 'details':
+                initDetailsPage();
+                break;
+            case 'watch':
+                initWatchPage();
+                break;
+            case 'schedule':
+                initSchedulePage();
+                break;
+            case 'watchlist':
+                initWatchlistPage();
+                break;
+        }
+    }
+
+    function initHomePage() {
+        // Render trending
+        const trendingContainer = document.querySelector('.trending-container');
+        if (trendingContainer && typeof getTrendingDonghua === 'function') {
+            renderCards(trendingContainer, getTrendingDonghua());
+        }
+
+        // Render latest episodes
+        const latestContainer = document.querySelector('.latest-container');
+        if (latestContainer && typeof getLatestEpisodes === 'function') {
+            const latest = getLatestEpisodes();
+            latestContainer.innerHTML = latest.map(d => `
+                <div class="latest-item" onclick="window.location.href='watch.html?id=${d.id}&ep=${d.displayEpisode}'">
+                    <img src="${d.poster}" alt="${d.title}" class="latest-thumb" loading="lazy">
+                    <div class="latest-info">
+                        <div class="latest-title">${d.title}</div>
+                        <div class="latest-episode">
+                            Episode ${d.displayEpisode}
+                            <span class="latest-badges">
+                                <span class="badge-sinhala">සිංහල උපසිරැසි</span>
+                                ${d.isNew ? '<span class="badge-new">NEW</span>' : ''}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render popular
+        const popularContainer = document.querySelector('.popular-container');
+        if (popularContainer && typeof getPopularDonghua === 'function') {
+            const popular = getPopularDonghua();
+            popularContainer.innerHTML = popular.map((d, i) => `
+                <div class="popular-item" onclick="window.location.href='details.html?id=${d.id}'">
+                    <div class="popular-rank">#${String(i + 1).padStart(2, '0')}</div>
+                    <img src="${d.poster}" alt="${d.title}" class="popular-thumb" loading="lazy">
+                    <div class="popular-info">
+                        <div class="popular-title">${d.title}</div>
+                        <div class="popular-meta">
+                            <span class="hero-rating">⭐ ${d.rating}</span> • ${d.year} • ${d.currentEpisode} EP
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render recommendations
+        const recContainer = document.querySelector('.recommendations-container');
+        if (recContainer && typeof getRecommendations === 'function') {
+            renderCards(recContainer, getRecommendations(''));
+        }
+    }
+
+    function initDonghuaPage() {
+        const container = document.querySelector('.donghua-grid');
+        if (container && typeof DONGHUA_DATA !== 'undefined') {
+            renderCards(container, DONGHUA_DATA);
+        }
+    }
+
+    function initDetailsPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        
+        if (!id || typeof getDonghuaById !== 'function') return;
+        
+        const donghua = getDonghuaById(id);
+        if (!donghua) {
+            document.querySelector('.details-content').innerHTML = '<div class="container"><h1>Donghua not found</h1></div>';
+            return;
+        }
+
+        // Update hero
+        const heroBg = document.querySelector('.details-hero-bg');
+        if (heroBg) heroBg.style.backgroundImage = `url('${donghua.banner}')`;
+
+        const poster = document.querySelector('.details-poster img');
+        if (poster) poster.src = donghua.poster;
+
+        const title = document.querySelector('.details-title');
+        if (title) title.textContent = donghua.title;
+
+        const altTitle = document.querySelector('.details-alt-title');
+        if (altTitle) altTitle.textContent = donghua.altTitle;
+
+        const rating = document.querySelector('.details-rating');
+        if (rating) rating.innerHTML = `⭐ ${donghua.rating}`;
+
+        const year = document.querySelector('.details-year');
+        if (year) year.textContent = donghua.year;
+
+        const status = document.querySelector('.details-status');
+        if (status) {
+            status.textContent = donghua.status;
+            status.className = `details-meta-item details-status ${donghua.status === 'Ongoing' ? 'status-ongoing' : 'status-completed'}`;
+        }
+
+        const episodes = document.querySelector('.details-episodes');
+        if (episodes) episodes.textContent = `${donghua.currentEpisode} / ${donghua.totalEpisodes} EP`;
+
+        const studio = document.querySelector('.details-studio');
+        if (studio) studio.textContent = donghua.studio;
+
+        const country = document.querySelector('.details-country');
+        if (country) country.textContent = donghua.country;
+
+        const desc = document.querySelector('.details-description');
+        if (desc) desc.textContent = donghua.description;
+
+        // Genres
+        const genresContainer = document.querySelector('.details-genres');
+        if (genresContainer) {
+            genresContainer.innerHTML = donghua.genres.map(g => 
+                `<span class="genre-tag">${g}</span>`
+            ).join('');
+        }
+
+        // Watch button
+        const watchBtn = document.querySelector('.watch-episode-btn');
+        if (watchBtn) {
+            watchBtn.href = `watch.html?id=${donghua.id}&ep=1`;
+        }
+
+        // Add to watchlist button
+        const addBtn = document.querySelector('.add-watchlist-btn');
+        if (addBtn) {
+            addBtn.dataset.id = donghua.id;
+            updateWatchlistButtonState(addBtn, donghua.id);
+        }
+
+        // Episode list
+        const episodeList = document.querySelector('.episode-list');
+        if (episodeList && typeof generateEpisodes === 'function') {
+            const episodes = generateEpisodes(donghua.id, Math.min(donghua.currentEpisode, 20));
+            episodeList.innerHTML = episodes.map((ep, i) => `
+                <div class="episode-item ${i === 0 ? 'active' : ''}" onclick="window.location.href='watch.html?id=${donghua.id}&ep=${ep.number}'">
+                    <div class="episode-number">${ep.number}</div>
+                    <div class="episode-info">
+                        <div class="episode-title">${ep.title}</div>
+                        <div class="episode-sub">සිංහල උපසිරැසි ඇත</div>
+                    </div>
+                    <div class="episode-duration">${ep.duration}</div>
+                </div>
+            `).join('');
+        }
+
+        // Sidebar info
+        const sidebarRating = document.querySelector('.sidebar-rating');
+        if (sidebarRating) sidebarRating.textContent = donghua.rating;
+
+        const sidebarYear = document.querySelector('.sidebar-year');
+        if (sidebarYear) sidebarYear.textContent = donghua.year;
+
+        const sidebarStatus = document.querySelector('.sidebar-status');
+        if (sidebarStatus) sidebarStatus.textContent = donghua.status;
+
+        const sidebarStudio = document.querySelector('.sidebar-studio');
+        if (sidebarStudio) sidebarStudio.textContent = donghua.studio;
+
+        const sidebarCountry = document.querySelector('.sidebar-country');
+        if (sidebarCountry) sidebarCountry.textContent = donghua.country;
+
+        const sidebarEpisodes = document.querySelector('.sidebar-episodes');
+        if (sidebarEpisodes) sidebarEpisodes.textContent = donghua.totalEpisodes;
+
+        const sidebarSinhala = document.querySelector('.sidebar-sinhala');
+        if (sidebarSinhala) sidebarSinhala.textContent = donghua.sinhalaSub ? 'Available' : 'Not Available';
+
+        // Recommendations
+        const recContainer = document.querySelector('.recommendations-container');
+        if (recContainer && typeof getRecommendations === 'function') {
+            renderCards(recContainer, getRecommendations(donghua.id));
+        }
+    }
+
+    function initWatchPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const episode = parseInt(urlParams.get('ep')) || 1;
+        
+        if (!id || typeof getDonghuaById !== 'function') return;
+        
+        const donghua = getDonghuaById(id);
+        if (!donghua) return;
+
+        // Update page info
+        const title = document.querySelector('.watch-title');
+        if (title) title.textContent = `${donghua.title} — Episode ${episode}`;
+
+        const meta = document.querySelector('.watch-meta');
+        if (meta) {
+            meta.innerHTML = `
+                <span>Episode ${episode}</span>
+                <span>•</span>
+                <span>${donghua.status}</span>
+                <span>•</span>
+                <span class="sinhala-text">සිංහල උපසිරැසි ඇත</span>
+            `;
+        }
+
+        // Episode navigation
+        const prevBtn = document.querySelector('.prev-episode-btn');
+        const nextBtn = document.querySelector('.next-episode-btn');
+        const epListBtn = document.querySelector('.episode-list-btn');
+
+        if (prevBtn) {
+            if (episode > 1) {
+                prevBtn.href = `watch.html?id=${id}&ep=${episode - 1}`;
+            } else {
+                prevBtn.style.opacity = '0.4';
+                prevBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        if (nextBtn) {
+            if (episode < donghua.currentEpisode) {
+                nextBtn.href = `watch.html?id=${id}&ep=${episode + 1}`;
+            } else {
+                nextBtn.style.opacity = '0.4';
+                nextBtn.style.pointerEvents = 'none';
+            }
+        }
+
+        if (epListBtn) {
+            epListBtn.href = `details.html?id=${id}`;
+        }
+
+        // Save progress
+        if (typeof saveProgress === 'function') {
+            // Simulate progress save
+            saveProgress(id, episode, 0);
+        }
+    }
+
+    function initSchedulePage() {
+        const container = document.querySelector('.schedule-grid');
+        if (!container || typeof SCHEDULE_DATA === 'undefined') return;
+
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const today = days[new Date().getDay()];
+
+        const grouped = {};
+        SCHEDULE_DATA.forEach(item => {
+            if (!grouped[item.day]) grouped[item.day] = [];
+            grouped[item.day].push(item);
+        });
+
+        container.innerHTML = days.map(day => {
+            const items = grouped[day] || [];
+            const isToday = day === today;
+            
+            return `
+                <div class="schedule-day">
+                    <div class="schedule-day-header">
+                        <div class="schedule-day-title">${day}</div>
+                        <span class="schedule-day-badge ${isToday ? 'badge-today' : 'badge-upcoming'}">
+                            ${isToday ? 'Today' : 'Upcoming'}
+                        </span>
+                    </div>
+                    ${items.length > 0 ? items.map(item => {
+                        const donghua = typeof getDonghuaById === 'function' ? 
+                            DONGHUA_DATA.find(d => d.title === item.donghua) : null;
+                        return `
+                            <div class="schedule-item">
+                                ${donghua ? `<img src="${donghua.poster}" alt="${item.donghua}" class="schedule-item-thumb" loading="lazy">` : ''}
+                                <div class="schedule-item-info">
+                                    <div class="schedule-item-title">${item.donghua}</div>
+                                    <div class="schedule-item-episode">Episode ${item.episode}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : '<p style="color: var(--text-muted); padding: 12px;">No releases scheduled</p>'}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function initWatchlistPage() {
+        const container = document.querySelector('.watchlist-grid');
+        const emptyState = document.querySelector('.watchlist-empty');
+        
+        if (!container) return;
+
+        if (typeof getWatchlist !== 'function') return;
+        
+        const watchlist = getWatchlist();
+        
+        if (watchlist.length === 0) {
+            if (emptyState) emptyState.style.display = 'block';
+            container.style.display = 'none';
+            return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+        container.style.display = 'grid';
+        
+        const donghuaList = watchlist.map(id => {
+            if (typeof getDonghuaById === 'function') {
+                return getDonghuaById(id);
+            }
+            return null;
+        }).filter(Boolean);
+
+        renderCards(container, donghuaList);
+    }
+
+    // ==========================================
+    // Helper Functions
+    // ==========================================
+    function renderCards(container, donghuaList) {
+        if (!container) return;
+        
+        if (donghuaList.length === 0) {
+            container.innerHTML = `
+                <div class="no-results" style="grid-column: 1/-1; padding: 60px 0;">
+                    <div class="no-results-icon">📂</div>
+                    <h3>No donghua found</h3>
+                    <p>Try adjusting your filters or search query</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = donghuaList.map((d, i) => `
+            <div class="card" onclick="window.location.href='details.html?id=${d.id}'" style="animation-delay: ${i * 0.05}s">
+                <div class="card-poster">
+                    <img src="${d.poster}" alt="${d.title}" loading="lazy">
+                    ${d.sinhalaSub ? '<span class="card-badge sinhala-text">සිංහල</span>' : ''}
+                    <span class="card-rating">⭐ ${d.rating}</span>
+                    <div class="card-overlay">
+                        <div class="card-play-btn">▶</div>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">${d.title}</div>
+                    <div class="card-meta">
+                        <span class="card-episodes">📺 ${d.currentEpisode}/${d.totalEpisodes}</span>
+                        <span class="card-status ${d.status === 'Ongoing' ? 'status-ongoing' : 'status-completed'}">${d.status}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateWatchlistButtonState(btn, id) {
+        if (typeof isInWatchlist !== 'function') return;
+        
+        if (isInWatchlist(id)) {
+            btn.innerHTML = '✓ In Watchlist';
+            btn.classList.add('in-watchlist');
+        } else {
+            btn.innerHTML = '＋ Add to Watchlist';
+            btn.classList.remove('in-watchlist');
+        }
+    }
+
+    // Make renderCards globally available
+    window.renderCards = renderCards;
+    window.updateWatchlistButtonState = updateWatchlistButtonState;
+})();
+
+// ==========================================
+// Toast Notification System
+// ==========================================
+function showToast(message, type = 'info') {
+    let container = document.querySelector('.toast-container');
+    
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    const icons = {
+        success: '✓',
+        error: '✕',
+        info: 'ℹ'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Trigger animation
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+    
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+'''
+
+with open("/mnt/agents/output/DonghuaBOT/js/app.js", "w", encoding="utf-8") as f:
+    f.write(app_js)
+
+print("app.js created successfully")

@@ -1,0 +1,575 @@
+
+search_js = '''// ==========================================
+// DonghuaBOT - Search Functionality
+// ==========================================
+
+(function() {
+    'use strict';
+
+    // Search functionality is partially in app.js for the overlay
+    // This file handles advanced search and filtering
+
+    // ==========================================
+    // Advanced Search with Debounce
+    // ==========================================
+    function initAdvancedSearch() {
+        const searchInput = document.querySelector('.advanced-search-input');
+        const resultsContainer = document.querySelector('.advanced-search-results');
+        const filtersContainer = document.querySelector('.search-filters');
+
+        if (!searchInput || !resultsContainer) return;
+
+        let searchTimeout;
+        let currentFilters = {
+            genre: 'all',
+            status: 'all',
+            year: 'all',
+            sort: 'popular'
+        };
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            searchTimeout = setTimeout(() => {
+                performSearch(query, currentFilters);
+            }, 300);
+        });
+
+        // Filter buttons
+        if (filtersContainer) {
+            filtersContainer.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const filterType = this.dataset.filter;
+                    const filterValue = this.dataset.value;
+                    
+                    // Update active state
+                    filtersContainer.querySelectorAll(`[data-filter="${filterType}"]`).forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    currentFilters[filterType] = filterValue;
+                    performSearch(searchInput.value.trim(), currentFilters);
+                });
+            });
+        }
+
+        function performSearch(query, filters) {
+            if (!window.DONGHUA_DATA) return;
+
+            let results = window.DONGHUA_DATA;
+
+            // Text search
+            if (query) {
+                const lowerQuery = query.toLowerCase();
+                results = results.filter(d =>
+                    d.title.toLowerCase().includes(lowerQuery) ||
+                    d.altTitle.toLowerCase().includes(lowerQuery) ||
+                    d.genres.some(g => g.toLowerCase().includes(lowerQuery)) ||
+                    d.description.toLowerCase().includes(lowerQuery) ||
+                    d.currentEpisode.toString().includes(lowerQuery)
+                );
+            }
+
+            // Genre filter
+            if (filters.genre && filters.genre !== 'all') {
+                results = results.filter(d => d.genres.includes(filters.genre));
+            }
+
+            // Status filter
+            if (filters.status && filters.status !== 'all') {
+                results = results.filter(d => d.status.toLowerCase() === filters.status.toLowerCase());
+            }
+
+            // Year filter
+            if (filters.year && filters.year !== 'all') {
+                results = results.filter(d => d.year.toString() === filters.year);
+            }
+
+            // Sort
+            switch(filters.sort) {
+                case 'rating':
+                    results.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'newest':
+                    results.sort((a, b) => b.year - a.year);
+                    break;
+                case 'episodes':
+                    results.sort((a, b) => b.currentEpisode - a.currentEpisode);
+                    break;
+                default: // popular
+                    results.sort((a, b) => a.popular - b.popular);
+            }
+
+            renderAdvancedResults(results);
+        }
+
+        function renderAdvancedResults(results) {
+            if (!resultsContainer) return;
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results" style="padding: 60px 0;">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No results found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = results.map((d, i) => `
+                <div class="card" onclick="window.location.href='details.html?id=${d.id}'" style="animation-delay: ${i * 0.05}s">
+                    <div class="card-poster">
+                        <img src="${d.poster}" alt="${d.title}" loading="lazy">
+                        ${d.sinhalaSub ? '<span class="card-badge sinhala-text">සිංහල</span>' : ''}
+                        <span class="card-rating">⭐ ${d.rating}</span>
+                        <div class="card-overlay">
+                            <div class="card-play-btn">▶</div>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${d.title}</div>
+                        <div class="card-meta">
+                            <span class="card-episodes">📺 ${d.currentEpisode}/${d.totalEpisodes}</span>
+                            <span class="card-status ${d.status === 'Ongoing' ? 'status-ongoing' : 'status-completed'}">${d.status}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initAdvancedSearch);
+})();
+'''
+
+watchlist_js = '''// ==========================================
+// DonghuaBOT - Watchlist & Continue Watching
+// ==========================================
+
+(function() {
+    'use strict';
+
+    const WATCHLIST_KEY = 'donghuabot_watchlist';
+    const CONTINUE_KEY = 'donghuabot_continue';
+
+    // ==========================================
+    // Watchlist Functions
+    // ==========================================
+    function getWatchlist() {
+        try {
+            const data = localStorage.getItem(WATCHLIST_KEY);
+            return data ? JSON.parse(data) : [];
+        } catch (e) {
+            console.error('Error reading watchlist:', e);
+            return [];
+        }
+    }
+
+    function saveWatchlist(watchlist) {
+        try {
+            localStorage.setItem(WATCHLIST_KEY, JSON.stringify(watchlist));
+        } catch (e) {
+            console.error('Error saving watchlist:', e);
+        }
+    }
+
+    function isInWatchlist(donghuaId) {
+        const watchlist = getWatchlist();
+        return watchlist.includes(donghuaId);
+    }
+
+    function addToWatchlist(donghuaId) {
+        const watchlist = getWatchlist();
+        
+        if (watchlist.includes(donghuaId)) {
+            // Remove from watchlist
+            const index = watchlist.indexOf(donghuaId);
+            watchlist.splice(index, 1);
+            saveWatchlist(watchlist);
+            showToast('Removed from Watchlist', 'info');
+            
+            // Update button if on details page
+            const btn = document.querySelector(`.add-watchlist-btn[data-id="${donghuaId}"]`);
+            if (btn) {
+                btn.innerHTML = '＋ Add to Watchlist';
+                btn.classList.remove('in-watchlist');
+            }
+            
+            // Refresh watchlist page if on it
+            if (document.body.dataset.page === 'watchlist') {
+                location.reload();
+            }
+            return;
+        }
+        
+        watchlist.push(donghuaId);
+        saveWatchlist(watchlist);
+        showToast('Added to Watchlist ✓', 'success');
+        
+        // Update button if on details page
+        const btn = document.querySelector(`.add-watchlist-btn[data-id="${donghuaId}"]`);
+        if (btn) {
+            btn.innerHTML = '✓ In Watchlist';
+            btn.classList.add('in-watchlist');
+        }
+    }
+
+    function removeFromWatchlist(donghuaId) {
+        const watchlist = getWatchlist();
+        const index = watchlist.indexOf(donghuaId);
+        
+        if (index > -1) {
+            watchlist.splice(index, 1);
+            saveWatchlist(watchlist);
+            showToast('Removed from Watchlist', 'info');
+            
+            // Refresh page if on watchlist
+            if (document.body.dataset.page === 'watchlist') {
+                location.reload();
+            }
+        }
+    }
+
+    // ==========================================
+    // Continue Watching Functions
+    // ==========================================
+    function getContinueWatching() {
+        try {
+            const data = localStorage.getItem(CONTINUE_KEY);
+            const progress = data ? JSON.parse(data) : {};
+            
+            if (!window.DONGHUA_DATA) return [];
+            
+            return Object.entries(progress)
+                .map(([id, item]) => {
+                    const donghua = window.DONGHUA_DATA.find(d => d.id === id);
+                    if (!donghua) return null;
+                    return {
+                        id: id,
+                        title: donghua.title,
+                        poster: donghua.poster,
+                        episode: item.episode,
+                        progress: item.progress || 0,
+                        timestamp: item.timestamp
+                    };
+                })
+                .filter(Boolean)
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 10);
+        } catch (e) {
+            console.error('Error reading continue watching:', e);
+            return [];
+        }
+    }
+
+    function saveProgress(donghuaId, episode, progressPercent) {
+        try {
+            const data = localStorage.getItem(CONTINUE_KEY);
+            const continueData = data ? JSON.parse(data) : {};
+            
+            continueData[donghuaId] = {
+                episode: episode,
+                progress: progressPercent,
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem(CONTINUE_KEY, JSON.stringify(continueData));
+        } catch (e) {
+            console.error('Error saving progress:', e);
+        }
+    }
+
+    function removeProgress(donghuaId) {
+        try {
+            const data = localStorage.getItem(CONTINUE_KEY);
+            const continueData = data ? JSON.parse(data) : {};
+            delete continueData[donghuaId];
+            localStorage.setItem(CONTINUE_KEY, JSON.stringify(continueData));
+        } catch (e) {
+            console.error('Error removing progress:', e);
+        }
+    }
+
+    // ==========================================
+    // Expose functions globally
+    // ==========================================
+    window.getWatchlist = getWatchlist;
+    window.saveWatchlist = saveWatchlist;
+    window.isInWatchlist = isInWatchlist;
+    window.addToWatchlist = addToWatchlist;
+    window.removeFromWatchlist = removeFromWatchlist;
+    window.getContinueWatching = getContinueWatching;
+    window.saveProgress = saveProgress;
+    window.removeProgress = removeProgress;
+})();
+'''
+
+player_js = '''// ==========================================
+// DonghuaBOT - Video Player
+// ==========================================
+
+(function() {
+    'use strict';
+
+    let player = null;
+    let progressInterval = null;
+    let currentDonghuaId = null;
+    let currentEpisode = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initPlayer();
+    });
+
+    function initPlayer() {
+        const videoContainer = document.querySelector('.video-container');
+        if (!videoContainer) return;
+
+        const video = videoContainer.querySelector('video');
+        if (!video) return;
+
+        player = video;
+        
+        // Get current donghua info from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        currentDonghuaId = urlParams.get('id');
+        currentEpisode = parseInt(urlParams.get('ep')) || 1;
+
+        // Controls
+        const playBtn = videoContainer.querySelector('.play-btn');
+        const muteBtn = videoContainer.querySelector('.mute-btn');
+        const fullscreenBtn = videoContainer.querySelector('.fullscreen-btn');
+        const progressBar = videoContainer.querySelector('.progress-bar');
+        const progressContainer = videoContainer.querySelector('.progress-bar-container');
+        const volumeSlider = videoContainer.querySelector('.volume-slider');
+        const currentTimeEl = videoContainer.querySelector('.current-time');
+        const durationEl = videoContainer.querySelector('.duration');
+        const speedBtn = videoContainer.querySelector('.speed-btn');
+        const subtitleBtn = videoContainer.querySelector('.subtitle-btn');
+        const subtitleDropdown = videoContainer.querySelector('.subtitle-dropdown');
+
+        // Play/Pause
+        if (playBtn) {
+            playBtn.addEventListener('click', togglePlay);
+        }
+
+        video.addEventListener('click', togglePlay);
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                videoContainer.classList.remove('paused');
+                if (playBtn) playBtn.innerHTML = '⏸';
+            } else {
+                video.pause();
+                videoContainer.classList.add('paused');
+                if (playBtn) playBtn.innerHTML = '▶';
+            }
+        }
+
+        // Update play button on video events
+        video.addEventListener('play', function() {
+            videoContainer.classList.remove('paused');
+            if (playBtn) playBtn.innerHTML = '⏸';
+        });
+
+        video.addEventListener('pause', function() {
+            videoContainer.classList.add('paused');
+            if (playBtn) playBtn.innerHTML = '▶';
+        });
+
+        video.addEventListener('ended', function() {
+            if (playBtn) playBtn.innerHTML = '▶';
+            videoContainer.classList.add('paused');
+        });
+
+        // Progress bar
+        video.addEventListener('timeupdate', function() {
+            if (progressBar && video.duration) {
+                const percent = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = percent + '%';
+            }
+            
+            if (currentTimeEl) {
+                currentTimeEl.textContent = formatTime(video.currentTime);
+            }
+            
+            // Auto-save progress every 5 seconds
+            if (currentDonghuaId && Math.floor(video.currentTime) % 5 === 0) {
+                const progressPercent = video.duration ? 
+                    Math.round((video.currentTime / video.duration) * 100) : 0;
+                if (typeof saveProgress === 'function') {
+                    saveProgress(currentDonghuaId, currentEpisode, progressPercent);
+                }
+            }
+        });
+
+        video.addEventListener('loadedmetadata', function() {
+            if (durationEl) {
+                durationEl.textContent = formatTime(video.duration);
+            }
+        });
+
+        // Seek
+        if (progressContainer) {
+            progressContainer.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                if (video.duration) {
+                    video.currentTime = pos * video.duration;
+                }
+            });
+        }
+
+        // Volume
+        if (volumeSlider) {
+            volumeSlider.value = video.volume * 100;
+            
+            volumeSlider.addEventListener('input', function() {
+                video.volume = this.value / 100;
+                updateMuteIcon();
+            });
+        }
+
+        // Mute
+        if (muteBtn) {
+            muteBtn.addEventListener('click', function() {
+                video.muted = !video.muted;
+                updateMuteIcon();
+            });
+        }
+
+        function updateMuteIcon() {
+            if (!muteBtn) return;
+            if (video.muted || video.volume === 0) {
+                muteBtn.innerHTML = '🔇';
+            } else if (video.volume < 0.5) {
+                muteBtn.innerHTML = '🔉';
+            } else {
+                muteBtn.innerHTML = '🔊';
+            }
+        }
+
+        // Fullscreen
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.webkitRequestFullscreen) {
+                    videoContainer.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        // Playback speed
+        if (speedBtn) {
+            const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+            let speedIndex = 2;
+            
+            speedBtn.addEventListener('click', function() {
+                speedIndex = (speedIndex + 1) % speeds.length;
+                video.playbackRate = speeds[speedIndex];
+                this.textContent = speeds[speedIndex] + 'x';
+            });
+        }
+
+        // Subtitle selector
+        if (subtitleBtn && subtitleDropdown) {
+            subtitleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                subtitleDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function() {
+                subtitleDropdown.classList.remove('active');
+            });
+
+            subtitleDropdown.querySelectorAll('.subtitle-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    subtitleDropdown.querySelectorAll('.subtitle-option').forEach(o => {
+                        o.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const lang = this.dataset.lang;
+                    showToast(`Subtitles: ${lang === 'off' ? 'Off' : lang}`, 'info');
+                    subtitleDropdown.classList.remove('active');
+                });
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT') return;
+            
+            switch(e.key) {
+                case ' ':
+                case 'k':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowLeft':
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                    break;
+                case 'ArrowRight':
+                    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    video.volume = Math.min(1, video.volume + 0.1);
+                    if (volumeSlider) volumeSlider.value = video.volume * 100;
+                    updateMuteIcon();
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    video.volume = Math.max(0, video.volume - 0.1);
+                    if (volumeSlider) volumeSlider.value = video.volume * 100;
+                    updateMuteIcon();
+                    break;
+                case 'f':
+                    toggleFullscreen();
+                    break;
+                case 'm':
+                    video.muted = !video.muted;
+                    updateMuteIcon();
+                    break;
+            }
+        });
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Expose player functions
+    window.formatTime = formatTime;
+})();
+'''
+
+with open("/mnt/agents/output/DonghuaBOT/js/search.js", "w", encoding="utf-8") as f:
+    f.write(search_js)
+
+with open("/mnt/agents/output/DonghuaBOT/js/watchlist.js", "w", encoding="utf-8") as f:
+    f.write(watchlist_js)
+
+with open("/mnt/agents/output/DonghuaBOT/js/player.js", "w", encoding="utf-8") as f:
+    f.write(player_js)
+
+print("search.js, watchlist.js, and player.js created successfully")

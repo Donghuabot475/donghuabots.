@@ -1,0 +1,565 @@
+
+responsive_css = '''/* ==========================================
+   DonghuaBOT - Responsive Stylesheet
+   ========================================== */
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1600px;
+    }
+    
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    
+    .scroll-container .card {
+        width: 200px;
+    }
+}
+
+/* Desktop (1024px - 1439px) */
+@media (max-width: 1439px) {
+    .details-grid {
+        grid-template-columns: 1.5fr 1fr;
+    }
+}
+
+/* Tablet (768px - 1023px) */
+@media (max-width: 1023px) {
+    .nav-desktop {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .mobile-nav {
+        display: block;
+    }
+    
+    .hero {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3rem);
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        max-width: 500px;
+    }
+    
+    .details-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+    
+    .details-poster {
+        width: 160px;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-sidebar {
+        position: static;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+    
+    .scroll-container .card {
+        width: 160px;
+    }
+    
+    .continue-card {
+        width: 240px;
+    }
+    
+    .schedule-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .genres-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* Mobile Large (414px - 767px) */
+@media (max-width: 767px) {
+    .container {
+        padding: 0 16px;
+    }
+    
+    .header-inner {
+        padding: 0 16px;
+        height: 64px;
+    }
+    
+    .mobile-nav {
+        top: 64px;
+    }
+    
+    .logo {
+        font-size: 1.2rem;
+    }
+    
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .hero {
+        height: 60vh;
+        min-height: 450px;
+        margin-top: 64px;
+    }
+    
+    .hero-content {
+        padding: 40px 16px;
+    }
+    
+    .hero-title {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+    }
+    
+    .hero-description {
+        font-size: 0.9rem;
+        max-width: 100%;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-actions .btn-primary,
+    .hero-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .hero-nav {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .hero-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .hero-dots {
+        bottom: 20px;
+    }
+    
+    .section {
+        padding: 40px 0;
+    }
+    
+    .section-header {
+        margin-bottom: 24px;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .section-title-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .card-poster {
+        aspect-ratio: 2/2.8;
+    }
+    
+    .card-info {
+        padding: 10px;
+    }
+    
+    .card-title {
+        font-size: 0.85rem;
+    }
+    
+    .card-meta {
+        font-size: 0.75rem;
+    }
+    
+    .scroll-container {
+        gap: 12px;
+    }
+    
+    .scroll-container .card {
+        width: 140px;
+    }
+    
+    .continue-card {
+        width: 260px;
+    }
+    
+    .latest-item {
+        padding: 10px;
+    }
+    
+    .latest-thumb {
+        width: 100px;
+        height: 56px;
+    }
+    
+    .popular-item {
+        padding: 10px;
+    }
+    
+    .popular-rank {
+        font-size: 1.2rem;
+        width: 32px;
+    }
+    
+    .popular-thumb {
+        width: 50px;
+        height: 75px;
+    }
+    
+    .genres-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .genre-btn {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+    }
+    
+    .details-hero {
+        height: 350px;
+    }
+    
+    .details-content {
+        padding: 30px 16px;
+    }
+    
+    .details-poster {
+        width: 120px;
+    }
+    
+    .details-title {
+        font-size: 1.5rem;
+    }
+    
+    .details-alt-title {
+        font-size: 0.95rem;
+    }
+    
+    .details-meta-row {
+        gap: 12px;
+    }
+    
+    .details-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .details-actions .btn-primary,
+    .details-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .episode-item {
+        padding: 10px 12px;
+    }
+    
+    .episode-number {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+    
+    .watch-info {
+        padding: 24px 16px;
+    }
+    
+    .watch-title {
+        font-size: 1.2rem;
+    }
+    
+    .episode-nav {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .episode-nav .btn-primary,
+    .episode-nav .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .schedule-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .modal {
+        padding: 30px 24px;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .toast-container {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .back-to-top {
+        width: 44px;
+        height: 44px;
+        bottom: 16px;
+        right: 16px;
+    }
+    
+    .page-header {
+        padding: 32px 0 24px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .filter-bar {
+        gap: 8px;
+    }
+    
+    .filter-btn {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+    }
+    
+    .video-controls {
+        padding: 12px;
+    }
+    
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .volume-slider {
+        width: 60px;
+    }
+    
+    .time-display {
+        font-size: 0.75rem;
+    }
+    
+    .search-container {
+        padding: 0 16px;
+    }
+    
+    .search-input {
+        padding: 14px 50px 14px 18px;
+        font-size: 1rem;
+    }
+    
+    .search-result-item {
+        padding: 10px;
+    }
+    
+    .search-result-img {
+        width: 50px;
+        height: 75px;
+    }
+}
+
+/* Mobile Medium (375px - 413px) */
+@media (max-width: 413px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .card-title {
+        font-size: 0.8rem;
+    }
+    
+    .card-meta {
+        font-size: 0.7rem;
+    }
+    
+    .scroll-container .card {
+        width: 130px;
+    }
+    
+    .continue-card {
+        width: 240px;
+    }
+    
+    .hero-title {
+        font-size: 1.6rem;
+    }
+    
+    .hero-description {
+        font-size: 0.85rem;
+    }
+    
+    .details-poster {
+        width: 100px;
+    }
+    
+    .details-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile Small (320px - 374px) */
+@media (max-width: 374px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .card-info {
+        padding: 8px;
+    }
+    
+    .card-title {
+        font-size: 0.75rem;
+    }
+    
+    .scroll-container .card {
+        width: 120px;
+    }
+    
+    .continue-card {
+        width: 220px;
+    }
+    
+    .hero-title {
+        font-size: 1.4rem;
+    }
+    
+    .hero-meta {
+        gap: 12px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+    
+    .details-poster {
+        width: 90px;
+    }
+    
+    .details-title {
+        font-size: 1.1rem;
+    }
+    
+    .genre-btn {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .episode-number {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .card:hover {
+        transform: none;
+    }
+    
+    .card-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(8, 11, 18, 0.9) 0%, transparent 60%);
+    }
+    
+    .card-play-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .video-controls {
+        opacity: 1;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: rgba(255, 255, 255, 0.3);
+        --text-muted: #a0a8b8;
+    }
+    
+    .card,
+    .episode-item,
+    .latest-item,
+    .popular-item,
+    .schedule-day,
+    .info-sidebar {
+        border-width: 2px;
+    }
+}
+'''
+
+with open("/mnt/agents/output/DonghuaBOT/css/responsive.css", "w", encoding="utf-8") as f:
+    f.write(responsive_css)
+
+print("responsive.css created successfully")
